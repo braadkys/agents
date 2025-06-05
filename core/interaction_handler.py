@@ -34,11 +34,7 @@ async def call_agent_turn(
                 if event.content and event.content.parts:
                     # Assuming the text response is in the first part for simplicity
                     final_response_text = event.content.parts[0].text
-                elif (
-                    event.actions
-                    and event.actions.escalate
-                    and hasattr(event, "error_message")
-                ):
+                elif event.actions and event.actions.escalate and hasattr(event, "error_message"):
                     final_response_text = f"Agent escalated: {event.error_message or 'No specific message.'}"
                 elif event.actions and event.actions.escalate:
                     final_response_text = "Agent escalated with an unspecified action."
