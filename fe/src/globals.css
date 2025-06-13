@@ -17,9 +17,16 @@
   --color-secondary: hsla(0, 0%, 100%, 0.6);
 }
 
+:root {
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   background-color: var(--color-background);
   position: relative;
   min-height: 100vh;
   color: var(--color-white);
+  display: flex;
+  flex-direction: column;
 }
