@@ -1,5 +1,4 @@
 type PromptInputProps = {
-  loading: boolean
   result?: string
   prompt?: string
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
@@ -7,7 +6,6 @@ type PromptInputProps = {
 }
 
 export const PromptInput = ({
-  loading,
   prompt,
   onChange,
   onSubmit
@@ -25,7 +23,6 @@ export const PromptInput = ({
         type='button'
         onClick={onSubmit}
         className='bg-oddin cursor-pointer font-semibold text-black w-full mt-2 rounded h-[40px]'
-        disabled={loading}
       >
         Submit
       </button>

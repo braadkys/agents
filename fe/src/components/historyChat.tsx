@@ -8,9 +8,10 @@ type HistoryItem = {
 
 type HistoryChatProps = {
   history: HistoryItem[]
+  loading: boolean
 }
 
-export const HistoryChat = ({ history }: HistoryChatProps) => {
+export const HistoryChat = ({ history, loading }: HistoryChatProps) => {
   const chatEndRef = useRef<HTMLDivElement>(null) // Explicitly type the ref.
 
   // Memoize the function with useCallback.
@@ -40,7 +41,14 @@ export const HistoryChat = ({ history }: HistoryChatProps) => {
           )}
         />
       ))}
-      <div ref={chatEndRef} /> {/* Ref applied to this div */}
+      {loading && (
+        <div className='bg-highlight flex gap-1 rounded-[20px] p-4 w-fit max-w-[800px]'>
+          <div className='dot bg-highlight w-4 animate-pulse h-4 rounded-full' />
+          <div className='dot bg-highlight w-4 animate-pulse h-4 rounded-full' />
+          <div className='dot bg-highlight w-4 h-4 rounded-full' />
+        </div>
+      )}
+      <div ref={chatEndRef} />
     </div>
   )
 }

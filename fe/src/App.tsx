@@ -9,7 +9,7 @@ import { getPersistedValue, persistValue } from './utils/persistValue.ts'
 
 function App() {
   const [paths, setPaths] = useState<string[]>(
-    () => getPersistedValue<[]>('paths') || []
+    getPersistedValue<string[]>('paths') || []
   )
   const [loading, setLoading] = useState(false)
   const [currentPath, setCurrentPath] = useState<string>('')
@@ -27,11 +27,11 @@ function App() {
   const handleSubmit = () => {
     if (!currentPath) return
     const updatedPaths = [...paths, currentPath]
-    setPaths(updatedPaths)
+    setPaths(updatedPaths) // Update paths state
     setPromptState((prev) => {
       return {
         prompt: prev.prompt,
-        paths: [...paths, currentPath]
+        paths: updatedPaths
       }
     })
     persistValue('paths', updatedPaths)
@@ -40,7 +40,7 @@ function App() {
 
   const handleDelete = (index: number) => {
     const updatedPaths = paths.filter((_, i) => i !== index)
-    setPaths(updatedPaths)
+    setPaths(updatedPaths) // Update paths state
     persistValue('paths', updatedPaths)
   }
 
@@ -80,10 +80,9 @@ function App() {
             onSubmit={handleSubmit}
           />
 
-          <HistoryChat history={history} />
+          <HistoryChat loading={loading} history={history} />
 
           <PromptInput
-            loading={loading}
             result={result}
             prompt={promptState.prompt}
             onChange={(e) =>
@@ -99,7 +98,7 @@ function App() {
         <PathInit
           currentPath={currentPath}
           onChange={(e) => setCurrentPath(e.target.value)}
-          addPaths={setPaths}
+          addPaths={(newPaths) => persistValue('paths', newPaths)}
           paths={paths}
           onSubmit={handleSubmit}
         />
