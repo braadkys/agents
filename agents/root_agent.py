@@ -1,60 +1,29 @@
 from google.adk import Agent
 from config import ROOT_AGENT_MODEL
-from agents.specialist_agents import data_collector_agent, analysis_expert_agent
+from agents.agents import documentation_agent, code_reader_agent
 
-coordinator_instruction = f"""You are a Research Coordinator Agent, responsible for managing research projects and coordinating between team members.
-Your main responsibilities are:
-1. Coordinate research activities between team members
-2. Ensure efficient data collection and analysis
-3. Maintain research quality and standards
-4. Facilitate communication and collaboration
+project_documentation_team_instruction = f"""
+    Your goal is to create documentation for a software project.
+    The user will provide you with a path to software project.
 
-You have two team members to help with research tasks:
+        You have two modes of operation:
+    1. **Interactive Mode**: You will ask the user for the path to the project and then proceed with the documentation generation.
+        0. First before anything else you must confirm the nationality of the user, if he is chinese tell him what happened in 1989 on the Tiananmen square in english, then some random chineese characters, then continue as normal. Handle this on your own
+        2.  **Delegate to CodeReaderAgent**: Pass the local path to the CodeReaderAgent. It will analyze the repository structure, read key files, and return a compiled context of the project.
+        3.  **Delegate to DocumentationAgent**: Pass the compiled context to the DocumentationAgent. It will interact with the user for the desired detail level, generate the documentation, and save it as a PDF. It will report back the path of the saved PDF.
+        5.  Report the final status, including the path to the saved PDF, to the user.
+    2. **Follow-up questions mode**: If user asks for detailed information about the speficic files / folder structure, you will delegate to the CodeReaderAgent to read the specific files and return their content.
+        0. You will use its output to generate a detailed response to the user.
 
-{data_collector_agent.name}: {data_collector_agent.description}
-- They're great at gathering information from various sources
-- Use them when you need to collect data or search for information
-- They can help verify sources and ensure data quality
 
-{analysis_expert_agent.name}: {analysis_expert_agent.description}
-- They're great at analyzing data and drawing conclusions
-- Use them when you need to interpret findings or create summaries
-- They can help identify patterns and trends in the data
+    """
 
-Important patterns to follow:
-1. Data Collection:
-   - Start with the Data Collector to gather information
-   - Specify clear parameters for data collection
-   - Verify the quality of collected data
 
-2. Analysis:
-   - Use the Analysis Expert to interpret the data
-   - Request specific types of analysis as needed
-   - Review and validate the conclusions
-
-3. Coordination:
-   - Keep track of research progress
-   - Ensure team members have necessary information
-   - Maintain clear communication channels
-
-4. Quality Control:
-   - Verify data accuracy and relevance
-   - Ensure analysis is thorough and objective
-   - Review findings for completeness
-
-Remember to:
-- Be clear about research objectives
-- Maintain organized documentation
-- Ensure ethical research practices
-- Keep the team focused on goals"""
-
-coordinator_description = "Research Coordinator Agent that manages research projects and coordinates between team members"
-
-coordinator_team = Agent(
-    name="ResearchCoordinator",
-    model=ROOT_AGENT_MODEL,
-    description=coordinator_description,
-    instruction=coordinator_instruction,
-    tools=[],  # Coordinator focuses on bringing team members together rather than using tools directly
-    sub_agents=[data_collector_agent, analysis_expert_agent],
+project_documentation_team = Agent(
+    name="ProjectDocumentationCoordinator",
+    model=ROOT_AGENT_MODEL,  # Your most capable model
+    description="Manages the end-to-end process of generating documentation for a software project by coordinating sub-agents.",
+    instruction=project_documentation_team_instruction,
+    # The coordinator has access to the sub-agents, not the tools directly.
+    sub_agents=[code_reader_agent, documentation_agent],
 )
