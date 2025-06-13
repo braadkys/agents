@@ -1,5 +1,7 @@
-import os
 from pathlib import Path
+from fpdf import FPDF
+import os
+import graphviz
 
 
 def find_and_read_from_desktop(filename: str):
@@ -27,9 +29,6 @@ def find_and_read_from_desktop(filename: str):
         return f"Error: Permission denied to read the file '{filename}'."
     except Exception as e:
         return f"An unexpected error occurred: {e}"
-
-
-from fpdf import FPDF
 
 
 def list_repository_files(directory: str) -> str:
@@ -116,6 +115,105 @@ def save_documentation_as_pdf(documentation_content: str) -> str:
     output_path = os.path.join(desktop_path, "CodeDocumentation.pdf")
     pdf.output(output_path)
     return f"Documentation successfully saved to {output_path}"
+
+
+def create_dependency_graph(dot_string: str) -> str:
+    """
+    Takes a string in the DOT graph language and renders it into a PNG image file.
+
+    This function saves the output to the user's Desktop.
+
+    Args:
+        dot_string (str): A string containing the graph definition in DOT language.
+
+    Returns:
+        str: A confirmation message with the path to the saved image file.
+    """
+    print(f"Tool: Rendering diagram from DOT string {dot_string}...")
+
+    try:
+        # Create a graph object from the DOT language source string
+        source = graphviz.Source(dot_string)
+
+        # Define the output path on the user's Desktop
+        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+        output_path_with_name = os.path.join(desktop_path, 'dependency_plot')
+
+        # Render the graph to a file (e.g., 'dependency_plot.png')
+        # The 'view=False' argument prevents it from opening automatically.
+        # The 'cleanup=True' option removes the intermediate source file.
+        rendered_path = source.render(output_path_with_name, format='png', view=False, cleanup=True)
+
+        final_message = f"Diagram creation complete. File saved to: {rendered_path}"
+        print(final_message)
+        return final_message
+
+    except graphviz.backend.ExecutableNotFound:
+        error_message = (
+            "ERROR: Graphviz system software not found. "
+            "Please install it and ensure it's in your system's PATH. "
+            "See installation instructions at https://graphviz.org/download/"
+        )
+        print(error_message)
+        return error_message
+    except Exception as e:
+        error_message = f"An unexpected error occurred: {e}"
+        print(error_message)
+        return error_message
+
+
+# --- Example of how to use the function ---
+if __name__ == '__main__':
+    # This is the DOT string from your agent's output in the screenshot
+    example_dot_string = """
+    digraph G {
+      rankdir=LR;
+      node [shape=box];
+      "app_main.py" [label="app_main.py"];
+      "config.py" [label="config.py"];
+      "agents/code_reader.py" [label="agents.code_reader"];
+      "agents/documentation_agent.py" [label="agents.documentation_agent"];
+      "core/services.py" [label="core.services"];
+      "core/interaction_handler.py" [label="core.interaction_handler"];
+      "tools/get_current_time.py" [label="tools.get_current_time"];
+      "tools/get_file.py" [label="tools.get_file"];
+      "agents/root_agent.py" [label="agents.root_agent"];
+      "app_main.py" -> "dotenv";
+      "app_main.py" -> "asyncio";
+      "app_main.py" -> "os";
+      "app_main.py" -> "uuid";
+      "app_main.py" -> "traceback";
+      "app_main.py" -> "google.adk";
+      "app_main.py" -> "config";
+      "app_main.py" -> "agents";
+      "app_main.py" -> "core";
+      "app_main.py" -> "call_agent_turn";
+      "app_main.py" -> "session_service";
+      "config.py" -> "os";
+      "agents/code_reader.py" -> "google.adk";
+      "agents/code_reader.py" -> "config";
+      "agents/code_reader.py" -> "tools";
+      "agents/documentation_agent.py" -> "google.adk";
+      "agents/documentation_agent.py" -> "config";
+      "core/services.py" -> "google.adk.sessions";
+      "core/interaction_handler.py" -> "google.adk";
+      "tools/get_current_time.py" -> "datetime";
+      "tools/get_file.py" -> "os";
+      "tools/get_file.py" -> "pathlib";
+      "tools/get_file.py" -> "fpdf";
+      "tools/get_file.py" -> "pyvis.network";
+      "tools/get_file.py" -> "re";
+      "agents/root_agent.py" -> "google.adk";
+      "agents/root_agent.py" -> "config";
+      "agents/root_agent.py" -> "tools";
+      "agents/root_agent.py" -> "code_reader_agent";
+      "agents/root_agent.py" -> "documentation_agent";
+      "agents/root_agent.py" -> "create_dependency_graph";
+    }
+    """
+
+    # Call the function with your DOT string
+    create_dependency_graph(example_dot_string)
 
 
 def save_documentation_as_html(documentation_content: str) -> str:
