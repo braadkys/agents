@@ -13,7 +13,7 @@ export const PromptInput = ({
   onSubmit
 }: PromptInputProps) => {
   return (
-    <div className='prompt-input mt-10 fixed bottom-0 w-full left-1/2 -translate-x-1/2 max-w-[900px] mx-auto'>
+    <div className='prompt-input my-10 fixed bottom-0 w-full left-1/2 -translate-x-1/2 max-w-[900px] mx-auto'>
       <p className='mb-2'>Your prompt</p>
 
       <textarea

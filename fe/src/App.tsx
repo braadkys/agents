@@ -9,13 +9,17 @@ import { getPersistedValue, persistValue } from './utils/persistValue.ts'
 
 function App() {
   const [paths, setPaths] = useState<string[]>(
-    () => getPersistedValue<string[]>('paths') || []
+    () => getPersistedValue<[]>('paths') || []
   )
   const [loading, setLoading] = useState(false)
   const [currentPath, setCurrentPath] = useState<string>('')
   const [showForm, setShowForm] = useState(false)
   const [result, setResult] = useState<string | undefined>()
-  const [prompt, setPrompt] = useState<string | undefined>()
+  const [promptState, setPromptState] = useState<{
+    prompt: string
+    paths: string[]
+  }>({ prompt: '', paths: paths })
+
   const [history, setHistory] = useState<
     { type: 'request' | 'result'; content: string }[]
   >([])
@@ -24,6 +28,12 @@ function App() {
     if (!currentPath) return
     const updatedPaths = [...paths, currentPath]
     setPaths(updatedPaths)
+    setPromptState((prev) => {
+      return {
+        prompt: prev.prompt,
+        paths: [...paths, currentPath]
+      }
+    })
     persistValue('paths', updatedPaths)
     setCurrentPath('')
   }
@@ -35,21 +45,24 @@ function App() {
   }
 
   const handlePostUserQuery = async () => {
-    if (!prompt) return
+    if (!promptState.prompt) return
     setLoading(true)
-    setHistory((prev) => [...prev, { type: 'request', content: prompt }]) // Add prompt to history
+    setHistory((prev) => [
+      ...prev,
+      { type: 'request', content: JSON.stringify(promptState.prompt) }
+    ]) // Add promptState to history
     try {
-      const response = await postUserQuery(prompt)
+      const response = await postUserQuery(promptState)
       setResult(response?.result)
       setHistory((prev) => [
         ...prev,
         { type: 'result', content: JSON.stringify(response.result) }
-      ]) // Add request to history
+      ]) // Add result to history
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setLoading(false)
-      setPrompt('') // Reset the prompt value
+      setPromptState({ prompt: '', paths }) // Reset the prompt while keeping paths
     }
   }
 
@@ -72,8 +85,13 @@ function App() {
           <PromptInput
             loading={loading}
             result={result}
-            prompt={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            prompt={promptState.prompt}
+            onChange={(e) =>
+              setPromptState((prev) => ({
+                ...prev,
+                prompt: e.target.value
+              }))
+            }
             onSubmit={handlePostUserQuery}
           />
         </Wrapper>

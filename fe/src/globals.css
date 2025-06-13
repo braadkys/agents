@@ -30,3 +30,22 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+#msg {
+  h1 {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  ul {
+    list-style-type: disc;
+    padding-left: 20px;
+  }
+  ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+  }
+}

@@ -45,10 +45,14 @@ export async function postEnd() {
     console.error('Error:', error)
   }
 }
-export async function postUserQuery(prompt: string | undefined) {
+export async function postUserQuery(promptState: {
+  prompt: string
+  paths: string[]
+}) {
   const url = 'http://127.0.0.1:8000/chat'
   const body = {
-    user_query: prompt ?? ''
+    prompt: promptState.prompt,
+    paths: promptState.paths
   }
 
   try {

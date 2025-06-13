@@ -27,13 +27,18 @@ export const HistoryChat = ({ history }: HistoryChatProps) => {
     <div className='flex mt-10 overflow-scroll gap-5 h-[calc(100vh-500px)] flex-col'>
       {history.map((item, index) => (
         <div
+          id={item.type === 'result' ? 'msg' : undefined}
+          dangerouslySetInnerHTML={{
+            __html: item.content
+          }}
           key={index}
-          className={cn('bg-oddin/40 rounded-[20px] p-4 w-fit max-w-[800px]', {
-            'bg-highlight ml-auto': item.type === 'request'
-          })}
-        >
-          <p className={cn('')}>{item.content}</p>
-        </div>
+          className={cn(
+            ' bg-highlight rounded-[20px] p-4 w-fit max-w-[800px]',
+            {
+              'bg-oddin/40 ml-auto': item.type === 'request'
+            }
+          )}
+        />
       ))}
       <div ref={chatEndRef} /> {/* Ref applied to this div */}
     </div>
