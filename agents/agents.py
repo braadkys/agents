@@ -2,23 +2,9 @@ from google.adk import Agent
 
 from config import SUB_AGENT_MODEL
 from tools import (
-    find_and_read_from_desktop,
-    clone_github_repo,
     list_repository_files,
     read_file_content,
     save_documentation_as_pdf,
-    delete_local_repo,
-    delete_repository_tool,
-)
-
-
-file_search_and_read_agent = Agent(
-    name="FileSearchAgent",
-    model=SUB_AGENT_MODEL,
-    description="Handles request to search and open python files from desktop",
-    instruction="""Search the local pc by using the tool provided and find the desired file, use the tool to get the file content and pass it back to the DocumentationAgent
-    """,
-    tools=[find_and_read_from_desktop],
 )
 
 documentation_agent = Agent(
@@ -61,19 +47,6 @@ After gathering the necessary information, structure the final documentation usi
 - Once the documentation is written and finalized, use the 'save_documentation_as_pdf' tool to save it.
 """,
     tools=[save_documentation_as_pdf],
-)
-
-github_agent = Agent(
-    name="GitHubAgent",
-    model=SUB_AGENT_MODEL,  # Or your preferred model
-    description="Clones a GitHub repository and deletes it when work is complete.",
-    instruction="""You are an expert in using Git.
-    - When the user provides a GitHub URL, your job is to clone it using the 'clone_github_repo' tool.
-    - Report back the local path where the repo was cloned.
-    - Later, when instructed, you must delete the same local directory using the 'delete_local_repo' tool.
-    DO NOT perform any other actions.
-    """,
-    tools=[clone_github_repo, delete_repository_tool],
 )
 
 code_reader_agent = Agent(

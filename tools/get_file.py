@@ -1,5 +1,5 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
 
 def find_and_read_from_desktop(filename: str):
@@ -29,33 +29,7 @@ def find_and_read_from_desktop(filename: str):
         return f"An unexpected error occurred: {e}"
 
 
-import subprocess
 from fpdf import FPDF
-
-
-def clone_github_repo(repo_url: str, local_path: str = "agent_workspace") -> str:
-    """
-    Clones a public GitHub repository to a local directory.
-    Args:
-        repo_url (str): The URL of the GitHub repository to clone.
-        local_path (str): The local directory path to clone the repository into.
-                          Defaults to 'agent_workspace'.
-    Returns:
-        str: The local path where the repository has been cloned.
-             Returns an error message if cloning fails.
-    """
-    if os.path.exists(local_path):
-        return f"Error: Directory '{local_path}' already exists. Please delete it or choose a different path."
-    try:
-        subprocess.run(
-            ["git", "clone", repo_url, local_path],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        return local_path
-    except subprocess.CalledProcessError as e:
-        return f"Error cloning repository: {e.stderr}"
 
 
 def list_repository_files(directory: str) -> str:
@@ -70,14 +44,24 @@ def list_repository_files(directory: str) -> str:
     """
     file_list = []
     # Common directories to ignore
-    ignore_dirs = {".git", "__pycache__", "node_modules", ".vscode", ".venv"}
+    ignore_common_dirs = {".git", "tests", ".idea", ".vscode", ".env"}
+    ignore_python_dirs = {".venv", ".ruff_cache", "__pycache__", "pytest", "mypy"}
 
-    for root, dirs, files in os.walk(directory):
-        # Remove ignored directories from traversal
-        dirs[:] = [d for d in dirs if d not in ignore_dirs]
-        for name in files:
+    ignore_dirs = ignore_common_dirs.union(ignore_python_dirs)
+
+    def is_ignored(dir_name: str) -> bool:
+        return any(to_ignore in dir_name for to_ignore in ignore_dirs)
+
+    for root, _, files in os.walk(directory):
+        if is_ignored(root):
+            continue
+
+        for file_name in files:
+            if is_ignored(file_name):
+                print(f"ignored {file_name}")
+                continue
             # Get the relative path from the root of the directory
-            relative_path = os.path.relpath(os.path.join(root, name), directory)
+            relative_path = os.path.relpath(os.path.join(root, file_name), directory)
             file_list.append(relative_path)
 
     return "Project File Structure:\n" + "\n".join(file_list)
@@ -130,45 +114,3 @@ def save_documentation_as_pdf(documentation_content: str, filename: str = "CodeD
     output_path = os.path.join(desktop_path, filename)
     pdf.output(output_path)
     return f"Documentation successfully saved to {output_path}"
-
-
-import shutil
-import time
-
-
-def delete_local_repo(directory: str, max_retries=5, delay_seconds=1) -> str:
-    """
-    Deletes a local directory, retrying on failure to handle transient file locks from other processes.
-    """
-    for attempt in range(max_retries):
-        try:
-            shutil.rmtree(directory)
-            print(f"Successfully deleted directory: {directory}")
-            return f"Successfully deleted directory: {directory}"
-        except PermissionError as e:
-            if attempt < max_retries - 1:
-                print(f"Attempt {attempt + 1} failed: Permission denied. Retrying in {delay_seconds}s...")
-                time.sleep(delay_seconds)  # Wait for the lock to be released
-            else:
-                # This was the last attempt, so return the error from here
-                print(f"Final attempt failed. Could not delete directory: {e}")
-                return f"Error: Failed to delete after {max_retries} attempts. Last error: {e}"
-        except FileNotFoundError:
-            return f"Error: Directory not found at '{directory}'"
-        except Exception as e:
-            return f"An unexpected error occurred: {e}"
-
-    # --- THIS IS THE FIX ---
-    # This line is only reached if the loop finishes in an unexpected way (e.g., max_retries=0).
-    # It ensures the function always returns a string as promised.
-    return f"Error: Could not delete '{directory}' after {max_retries} attempts."
-
-
-def delete_repository_tool(directory: str) -> str:
-    """
-    A simple tool for the AI to delete a cloned repository directory.
-    This tool handles retries and file permissions internally.
-    """
-    print(f"Tool called: Attempting to delete '{directory}' with internal retry logic.")
-    # Call your existing, robust function with the desired retry values hardcoded.
-    return delete_local_repo(directory=directory, max_retries=5, delay_seconds=2)
