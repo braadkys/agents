@@ -79,7 +79,9 @@ class ChatAPI:
         if self.app_runner is None:
             return {"error": "Runner not started. Please call /start first."}
         data = await request.json()
-        user_query = data["user_query"]
+        user_query = data["prompt"]
+        if "paths" in data:
+            user_query = f"{user_query} paths: {data["paths"]}"
         print(f"User Query: {user_query}")
         result = await call_agent_turn(
             query=user_query,
