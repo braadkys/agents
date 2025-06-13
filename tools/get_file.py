@@ -44,11 +44,12 @@ def list_repository_files(directory: str) -> str:
     """
     file_list = []
     # Common directories to ignore
-    ignore_common_dirs = {".git", "tests", ".idea", ".vscode", ".env", "build"}
+    ignore_common_dirs = {".git", "tests", ".idea", ".vscode", ".env", "Dockerfile", "build"}
     ignore_fe_dirs = {"node_modules", "out", ".storybook"}
     ignore_python_dirs = {".venv", ".ruff_cache", "__pycache__", "pytest", "mypy"}
+    ignore_go_dirs = {"go.mod", "go.sum", "mock", "_test.go"}
 
-    ignore_dirs = ignore_fe_dirs | ignore_common_dirs | ignore_python_dirs
+    ignore_dirs = ignore_fe_dirs | ignore_common_dirs | ignore_python_dirs | ignore_go_dirs
 
     def is_ignored(dir_name: str) -> bool:
         return any(to_ignore in dir_name for to_ignore in ignore_dirs)
@@ -87,7 +88,7 @@ def read_file_content(filepath: str) -> str:
         return f"Error reading file '{filepath}': {e}"
 
 
-def save_documentation_as_pdf(documentation_content: str, filename: str = "CodeDocumentation.pdf") -> str:
+def save_documentation_as_pdf(documentation_content: str) -> str:
     """
     Saves the provided string content into a PDF file on the desktop.
 
@@ -112,6 +113,73 @@ def save_documentation_as_pdf(documentation_content: str, filename: str = "CodeD
     if not os.path.exists(desktop_path):
         desktop_path = os.getcwd()  # Fallback to current directory
 
-    output_path = os.path.join(desktop_path, filename)
+    output_path = os.path.join(desktop_path, "CodeDocumentation.pdf")
     pdf.output(output_path)
     return f"Documentation successfully saved to {output_path}"
+
+
+def save_documentation_as_html(documentation_content: str) -> str:
+    """
+    Saves the provided string content into an HTML file on the desktop.
+
+    To preserve formatting like line breaks and spacing from the original
+    documentation string, the content is wrapped in HTML <pre> tags.
+
+    Args:
+        documentation_content (str): The text content to be saved as documentation.
+        filename (str): The name of the output HTML file.
+                        Defaults to 'CodeDocumentation.html'.
+
+    Returns:
+        str: A confirmation message with the path where the file was saved.
+    """
+    # Create a basic HTML structure to wrap the content
+    # The <pre> tag is used to preserve whitespace and line breaks
+    html_template = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF--8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Documentation</title>
+    <style>
+        body {{
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 2em;
+        }}
+        pre {{
+            background-color: #f4f4f4;
+            padding: 1em;
+            border-radius: 5px;
+            white-space: pre-wrap;       /* Alows text to wrap */
+            word-wrap: break-word;       /* Breaks long words if necessary */
+        }}
+    </style>
+</head>
+<body>
+    <pre>{documentation_content}</pre>
+</body>
+</html>
+"""
+
+    filename = 'test.html'
+
+    # Get the path to the user's desktop
+    # os.path.expanduser("~") gets the home directory (e.g., /Users/username or C:\\Users\\username)
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+
+    # If the Desktop directory doesn't exist, fall back to the current working directory
+    if not os.path.exists(desktop_path):
+        desktop_path = os.getcwd()
+
+    # Define the full path for the output file
+    output_path = os.path.join(desktop_path, filename)
+
+    try:
+        # Write the HTML content to the file
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html_template)
+        return f"Documentation successfully saved to {output_path}"
+    except IOError as e:
+        return f"Error: Could not save file. {e}"

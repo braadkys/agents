@@ -4,7 +4,7 @@ from config import SUB_AGENT_MODEL
 from tools import (
     list_repository_files,
     read_file_content,
-    save_documentation_as_pdf,
+    save_documentation_as_html,
 )
 
 documentation_agent = Agent(
@@ -25,10 +25,10 @@ First, ask the user about the desired level of detail for the summary (High, Med
 ---
 **DOCUMENT STRUCTURE AND FORMATTING RULES**
 
-After gathering the necessary information, structure the final documentation using Markdown, strictly following these rules:
+After gathering the necessary information, structure the final documentation using HTML, strictly following these rules:
 
 **1. REQUIRED SECTIONS:** The document must have this exact structure:
-   - `# [Project Name]`: The main H1 title.
+   - `# [Project Name]`: The main <h1> title.
    - `## 📖 Summary`: The summary you generated based on the user's chosen detail level.
    - `## ✨ Core Features`: A bulleted list of the 3-5 most important capabilities.
    - `## 🚀 Getting Started`: A numbered, step-by-step installation and setup guide.
@@ -36,17 +36,17 @@ After gathering the necessary information, structure the final documentation usi
    - `## ⚙️ Configuration`: An explanation of any necessary environment variables or config files.
 
 **2. FORMATTING:**
-   - Use headings (`#`, `##`) to create a clear hierarchy.
-   - Enclose ALL code, commands, filenames, and variable names in backticks (` `` `).
+   - Use headings (`<h2>`, `<h3>`) to create a clear hierarchy.
+   - Enclose ALL code, commands, filenames with js lib on this webside 'https://highlightjs.org' On that webside you can see how to use it.
    - Use full code blocks with language identifiers (e.g., ```python) for all multi-line code snippets.
    - Write in clear, concise paragraphs. **Avoid long, flat lists of asterisks.** Instead, group related items logically under descriptive subheadings.
 
 ---
 **IMPORTANT CONSTRAINTS:**
 - Your analysis MUST BE GROUNDED in the provided context. DO NOT MAKE UP Features.
-- Once the documentation is written and finalized, use the 'save_documentation_as_pdf' tool to save it.
+- Once the documentation is written and finalized, use the 'save_documentation_as_html' tool to save it.
 """,
-    tools=[save_documentation_as_pdf],
+    tools=[save_documentation_as_html],
 )
 
 code_reader_agent = Agent(

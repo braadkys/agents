@@ -4,6 +4,7 @@ from .get_file import (
     list_repository_files,
     read_file_content,
     save_documentation_as_pdf,
+    save_documentation_as_html,
 )
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "list_repository_files",
     "read_file_content",
     "save_documentation_as_pdf",
+    "save_documentation_as_html",
 ]
