@@ -44,10 +44,11 @@ def list_repository_files(directory: str) -> str:
     """
     file_list = []
     # Common directories to ignore
-    ignore_common_dirs = {".git", "tests", ".idea", ".vscode", ".env"}
+    ignore_common_dirs = {".git", "tests", ".idea", ".vscode", ".env", "build"}
+    ignore_fe_dirs = {"node_modules", "out", ".storybook"}
     ignore_python_dirs = {".venv", ".ruff_cache", "__pycache__", "pytest", "mypy"}
 
-    ignore_dirs = ignore_common_dirs.union(ignore_python_dirs)
+    ignore_dirs = ignore_fe_dirs | ignore_common_dirs | ignore_python_dirs
 
     def is_ignored(dir_name: str) -> bool:
         return any(to_ignore in dir_name for to_ignore in ignore_dirs)
