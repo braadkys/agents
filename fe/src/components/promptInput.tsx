@@ -1,5 +1,4 @@
 type PromptInputProps = {
-  result?: string
   prompt?: string
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   onSubmit: () => void

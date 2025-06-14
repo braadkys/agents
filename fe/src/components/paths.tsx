@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react'
+import { type ChangeEvent, useState } from 'react'
 import { Input } from './input.tsx'
 import { PathItem } from './pathItem.tsx'
 
@@ -8,10 +8,12 @@ type Props = {
   currentPath?: string
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
   onDelete: (index: number) => void
-  showForm: boolean
-  onToggleForm: () => void
 }
 export const Paths = (props: Props) => {
+  const [showForm, setShowForm] = useState(false)
+  const handleToggleForm = () => {
+    setShowForm(!showForm)
+  }
   return (
     <div className='bg-foreground py-4 rounded-b-[20px] px-10 '>
       <div className='max-w-[900px] mx-auto'>
@@ -27,7 +29,7 @@ export const Paths = (props: Props) => {
           ))}
         </ul>
 
-        {props.showForm ? (
+        {showForm ? (
           <div className='flex mt-4 gap-2'>
             <div className='w-full'>
               <Input
@@ -42,7 +44,7 @@ export const Paths = (props: Props) => {
               type='button'
               onClick={() => {
                 props.onSubmit()
-                props.onToggleForm()
+                handleToggleForm()
               }}
               className='bg-highlight border-highlight border text-white cursor-pointer text-sm font-semibold text-black w-full rounded h-[40px]'
             >
@@ -50,7 +52,7 @@ export const Paths = (props: Props) => {
             </button>
             <button
               type='button'
-              onClick={props.onToggleForm}
+              onClick={handleToggleForm}
               className='border-fail border bg-fail-mild cursor-pointer font-semibold text-white rounded-full min-w-[40px] h-[40px] flex items-center justify-center'
             >
               X
@@ -59,7 +61,7 @@ export const Paths = (props: Props) => {
         ) : (
           <button
             type='button'
-            onClick={props.onToggleForm}
+            onClick={handleToggleForm}
             className='border-success border bg-success-mild cursor-pointer font-semibold text-white rounded-full min-w-[40px] h-[40px] flex items-center justify-center mt-4'
           >
             +

@@ -1,3 +1,8 @@
+import type { Prompt } from '../types/types.ts'
+
+type ChatResponse = {
+  result: string
+}
 export async function postStart() {
   const url = 'http://127.0.0.1:8000/start'
   const body = {
@@ -45,10 +50,10 @@ export async function postEnd() {
     console.error('Error:', error)
   }
 }
-export async function postUserQuery(promptState: {
-  prompt: string
-  paths: string[]
-}) {
+
+export async function postUserQuery(
+  promptState: Prompt
+): Promise<ChatResponse> {
   const url = 'http://127.0.0.1:8000/chat'
   const body = {
     prompt: promptState.prompt,
@@ -68,8 +73,7 @@ export async function postUserQuery(promptState: {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    const data = await response.json()
-    return data // Return the response data
+    return await response.json()
   } catch (error) {
     console.error('Error:', error)
     throw error // Rethrow the error for further handling
