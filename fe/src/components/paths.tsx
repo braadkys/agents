@@ -18,25 +18,24 @@ export const Paths = (props: Props) => {
   }
 
   return (
-    <div
-      className={cn(
-        'bg-foreground fixed top-0 transition-all duration-150 left-1/2 -translate-x-1/2 max-w-[1000px] py-4 w-full rounded-b-[20px] px-10 ',
-        { '-translate-y-4/5': !showSection }
-      )}
-    >
+    <div className='bg-foreground fixed top-0 left-1/2 -translate-x-1/2 max-w-[1000px] py-4 w-full rounded-b-[20px] px-10 '>
       <div className='max-w-[900px] mx-auto'>
-        <h3 className='text-[20px] font-bold mb-4'>Saved Paths:</h3>
-        <ul className='flex flex-col gap-2'>
-          {props.paths.map((path, index) => (
-            <PathItem
-              key={index}
-              path={path}
-              index={index}
-              onDelete={props.onDelete}
-            />
-          ))}
-        </ul>
-
+        {showSection && (
+          <>
+            {' '}
+            <h3 className='text-[20px] font-bold mb-4'>Saved Paths:</h3>
+            <ul className='flex flex-col gap-2'>
+              {props.paths.map((path, index) => (
+                <PathItem
+                  key={index}
+                  path={path}
+                  index={index}
+                  onDelete={props.onDelete}
+                />
+              ))}
+            </ul>
+          </>
+        )}
         {showForm ? (
           <div className='flex mt-4 gap-2'>
             <div className='w-full'>
