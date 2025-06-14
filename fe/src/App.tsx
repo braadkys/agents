@@ -5,6 +5,7 @@ import { PathInit } from './components/pathInit.tsx'
 import { Paths } from './components/paths.tsx'
 import { PromptInput } from './components/promptInput.tsx'
 import { Wrapper } from './components/wrapper.tsx'
+import type { HistoryItem, HistoryItemType, Prompt } from './types/types.ts'
 import { getPersistedValue, persistValue } from './utils/persistValue.ts'
 
 function App() {
@@ -13,16 +14,12 @@ function App() {
   )
   const [loading, setLoading] = useState(false)
   const [currentPath, setCurrentPath] = useState<string>('')
-  const [showForm, setShowForm] = useState(false)
-  const [result, setResult] = useState<string | undefined>()
-  const [promptState, setPromptState] = useState<{
-    prompt: string
-    paths: string[]
-  }>({ prompt: '', paths: paths })
+  const [promptState, setPromptState] = useState<Prompt>({
+    prompt: '',
+    paths: paths
+  })
 
-  const [history, setHistory] = useState<
-    { type: 'request' | 'result'; content: string }[]
-  >([])
+  const [history, setHistory] = useState<HistoryItem[]>([])
 
   const handleSubmit = () => {
     if (!currentPath) return
@@ -38,6 +35,10 @@ function App() {
     setCurrentPath('')
   }
 
+  const handlePushToHistory = (prompt: string, type: HistoryItemType) => {
+    setHistory((prev) => [...prev, { type, content: prompt }])
+  }
+
   const handleDelete = (index: number) => {
     const updatedPaths = paths.filter((_, i) => i !== index)
     setPaths(updatedPaths) // Update paths state
@@ -47,17 +48,10 @@ function App() {
   const handlePostUserQuery = async () => {
     if (!promptState.prompt) return
     setLoading(true)
-    setHistory((prev) => [
-      ...prev,
-      { type: 'request', content: JSON.stringify(promptState.prompt) }
-    ]) // Add promptState to history
+    handlePushToHistory(promptState.prompt, 'request')
     try {
       const response = await postUserQuery(promptState)
-      setResult(response?.result)
-      setHistory((prev) => [
-        ...prev,
-        { type: 'result', content: JSON.stringify(response.result) }
-      ]) // Add result to history
+      handlePushToHistory(response.result, 'result')
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -73,17 +67,12 @@ function App() {
           <Paths
             paths={paths}
             currentPath={currentPath}
-            showForm={showForm}
-            onToggleForm={() => setShowForm(!showForm)}
             onChange={(e) => setCurrentPath(e.target.value)}
             onDelete={handleDelete}
             onSubmit={handleSubmit}
           />
-
           <HistoryChat loading={loading} history={history} />
-
           <PromptInput
-            result={result}
             prompt={promptState.prompt}
             onChange={(e) =>
               setPromptState((prev) => ({
