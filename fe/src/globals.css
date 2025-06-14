@@ -73,7 +73,13 @@ body {
 .dot:nth-of-type(3) {
   animation-delay: 0.4s;
 }
-
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 @keyframes jump {
   0%,
   80%,

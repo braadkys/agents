@@ -25,7 +25,7 @@ export const HistoryChat = ({ history, loading }: HistoryChatProps) => {
   }, [history])
 
   return (
-    <div className='flex mt-10 overflow-scroll gap-5 h-[calc(100vh-500px)] flex-col'>
+    <div className='no-scrollbar flex mt-10 overflow-scroll pt-40 gap-5 h-[calc(100vh-300px)] flex-col'>
       {history.map((item, index) => (
         <div
           id={item.type === 'result' ? 'msg' : undefined}
