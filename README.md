@@ -1,114 +1,92 @@
-# Research Agent System
+# Project Documentation Agent System
 
-A system of specialized agents working together to conduct research, analyze information, and generate insights.
+A sophisticated, multi-agent system designed to automate software project documentation. It leverages a team of specialized AI agents to analyze a codebase, generate documentation, create architectural diagrams, and produce README files, all managed through an interactive web interface.
 
-## Overview
+## 🚀 Overview
 
-This system consists of three main components:
+This project combines a powerful Python backend with a modern React frontend to provide a seamless documentation experience. At its core, a `ProjectDocumentationCoordinator` agent orchestrates a team of sub-agents, each specializing in a specific task.
 
-1. **Research Coordinator**: The main agent that orchestrates the research process and manages the team
-2. **Data Collector**: Specializes in gathering information from various sources
-3. **Analysis Expert**: Focuses on analyzing and interpreting the collected data
+### Key Features:
+-   **Automated Code Analysis**: The `CodeReaderAgent` scans the project's file structure and content.
+-   **Detailed Documentation**: The `DocumentationAgent` generates in-depth documentation from the analyzed code.
+-   **Architectural Graphs**: The `GraphCreationAgent` produces visual diagrams of the project architecture.
+-   **Interactive UI**: A React-based frontend allows users to easily interact with the agent system.
 
-## Installation
+## 🛠️ Tech Stack
 
-1. Clone the repository:
+-   **Backend**: Python, FastAPI, Google Agent Development Kit (ADK), LiteLLM
+-   **Frontend**: React, TypeScript, Vite, Tailwind CSS
+-   **Package Management**: `uv` (Python), `yarn` / `npm` (Node.js)
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+-   Python 3.12+ and `uv` (`pip install uv`)
+-   Node.js and `yarn` or `npm`
+
+### 1. Backend Setup
+
+First, set up and run the Python backend.
+
 ```bash
-git clone <repository-url>
-cd agents
-```
-
-2. Install dependencies using uv:
-```bash
+# Install Python dependencies
 uv sync
 ```
 
-3. Set up environment variables:
+### 2. Frontend Setup
+
+Next, set up the React frontend.
+
 ```bash
-cp .env.example .env
-# Edit .env with your configuration
+# 1. Navigate to the frontend directory
+cd fe
+
+# 2. Install Node.js dependencies
+yarn install
+# or
+npm install
 ```
 
-## Project Structure
+## ▶️ Terminal Usage
 
-```
-research-agent-system/
-├── agents/
-│   ├── root_agent.py      # Research Coordinator agent
-│   └── specialist_agents.py  # Data Collector and Analysis Expert agents
-├── tools/
-│   ├── web_search.py      # Web search functionality using DuckDuckGo
-│   ├── content_analysis.py # Text analysis using NLTK
-│   ├── data_collection.py # Data collection from various sources
-│   ├── summarization.py   # Research findings summarization
-│   └── __init__.py        # Tool exports
-├── requirements.txt
-├── .env.example
-└── README.md
+
+### 0. Activate venv
+
+```bash
+source .venv/bin/activate
 ```
 
-## Tools
+### 1. Start prompting the Agent in terminal
 
-The system includes several specialized tools:
-
-### Web Search (`web_search.py`)
-- Uses DuckDuckGo API for web searches
-- Returns structured search results with metadata
-- Handles error cases and rate limiting
-
-### Content Analysis (`content_analysis.py`)
-- Performs sentiment analysis on text
-- Extracts keywords and key phrases
-- Generates text summaries
-- Uses NLTK for natural language processing
-
-### Data Collection (`data_collection.py`)
-- Collects data from multiple sources:
-  - Web pages (content, links, metadata)
-  - APIs (REST endpoints)
-  - CSV files (with statistical summaries)
-  - JSON files
-- Handles various data formats and error cases
-
-### Summarization (`summarization.py`)
-- Provides multiple summary formats:
-  - Brief (2-sentence summary)
-  - Detailed (comprehensive summary)
-  - Structured (key findings, keywords, metadata)
-- Uses advanced NLP techniques for summarization
-
-## Usage
-
-1. Start the Research Coordinator:
-```python
-from agents.root_agent import research_coordinator
-
-# Initialize the coordinator
-coordinator = research_coordinator
-
-# Start a research task
-result = coordinator.run("Research quantum computing applications in healthcare")
+```bash
+python3 app_main.py
 ```
 
-2. The coordinator will:
-   - Break down the research task
-   - Delegate to specialist agents
-   - Collect and analyze information
-   - Generate a comprehensive report
+## ▶️ GUI Usage
 
-## Example
+To run the application, you need to start both the backend server and the frontend development server.
 
-```python
-from agents.root_agent import research_coordinator
+### 1. Start the Backend Server
 
-# Example research task
-task = "Analyze the impact of AI on healthcare in 2024"
+From the project's **root directory**:
 
-# Run the research
-result = research_coordinator.run(task)
-
-# Process the results
-print(result["summary"])
-print(result["key_findings"])
-print(result["sources"])
+```bash
+uvicorn api_server:app --reload
 ```
+The API server will be running at `http://127.0.0.1:8000`.
+
+### 2. Start the Frontend Server
+
+In a **new terminal**, navigate to the `fe` directory:
+
+```bash
+# Navigate to the frontend directory
+cd fe
+
+# Start the development server
+yarn dev
+# or
+npm run dev
+```
+
+The React application will be available in your browser at `http://localhost:5173` (or another port if 5173 is busy). You can now use the web interface to interact with the documentation agent system.
