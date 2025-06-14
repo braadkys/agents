@@ -119,34 +119,6 @@ def save_documentation_as_html(documentation_content: str) -> str:
     """
     # Create a basic HTML structure to wrap the content
     # The <pre> tag is used to preserve whitespace and line breaks
-    html_template = f"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF--8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Documentation</title>
-    <style>
-        body {{
-            font-family: sans-serif;
-            line-height: 1.6;
-            margin: 2em;
-        }}
-        pre {{
-            background-color: #f4f4f4;
-            padding: 1em;
-            border-radius: 5px;
-            white-space: pre-wrap;       /* Alows text to wrap */
-            word-wrap: break-word;       /* Breaks long words if necessary */
-        }}
-    </style>
-</head>
-<body>
-    <pre>{documentation_content}</pre>
-</body>
-</html>
-"""
-
     file_name = f"documentation_{datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}.html"
 
     # Get the path to the user's desktop
@@ -161,7 +133,7 @@ def save_documentation_as_html(documentation_content: str) -> str:
 
     try:
         with open(output_path, "w", encoding="utf-8") as f:
-            f.write(html_template)
+            f.write(documentation_content)
         return f"Documentation successfully saved to {output_path}"
     except IOError as e:
         return f"Error: Could not save file. {e}"
